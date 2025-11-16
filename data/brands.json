@@ -1,0 +1,13 @@
+[
+  {"id": "brand1", "name": "Desi Delights", "logo": "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=100", "verified": true, "category": "Spices"},
+  {"id": "brand2", "name": "Swadeshi Foods", "logo": "https://images.unsplash.com/photo-1606787620819-8bdf0c44c293?w=100", "verified": true, "category": "Grains"},
+  {"id": "brand3", "name": "Village Dairy", "logo": "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=100", "verified": true, "category": "Dairy"},
+  {"id": "brand4", "name": "Home Care Plus", "logo": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100", "verified": true, "category": "Household"},
+  {"id": "brand5", "name": "Namaste Snacks", "logo": "https://images.unsplash.com/photo-1606787564107-79daac28b4b8?w=100", "verified": true, "category": "Snacks"},
+  {"id": "brand6", "name": "Pure Oils Co.", "logo": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=100", "verified": true, "category": "Oils"},
+  {"id": "brand7", "name": "Local Farm Fresh", "logo": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=100", "verified": true, "category": "Vegetables"},
+  {"id": "brand8", "name": "Krishak Farms", "logo": "https://images.unsplash.com/photo-1563200202-60585f67cf9f?w=100", "verified": true, "category": "Vegetables"},
+  {"id": "brand9", "name": "Village Fresh", "logo": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=100", "verified": true, "category": "Vegetables"},
+  {"id": "brand10", "name": "Tropical Fresh", "logo": "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=100", "verified": true, "category": "Fruits"},
+  {"id": "brand11", "name": "Hill Station", "logo": "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=100", "verified": true, "category": "Fruits"}
+]

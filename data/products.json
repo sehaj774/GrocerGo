@@ -1,0 +1,11 @@
+[
+  {"id": "1", "name": "Onions", "brand": "Local Farm Fresh", "category": "vegetables", "price": "25.00", "unit": "kg", "image": "https://www.foodandwine.com/thmb/AJ3n6lDkc-KQcve9FW5jdQgJNBM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Onion-Explainer-FT-BLOG0822-2000-97f10a001c9943d8b61c6c6b2095a076.jpg", "verified": true, "inStock": true},
+  {"id": "2", "name": "Tomatoes", "brand": "Krishak Farms", "category": "vegetables", "price": "30.00", "unit": "kg", "image": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400", "verified": true, "inStock": true},
+  {"id": "3", "name": "Potatoes", "brand": "Village Fresh", "category": "vegetables", "price": "20.00", "unit": "kg", "image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400", "verified": true, "inStock": true},
+  {"id": "9", "name": "Bananas", "brand": "Tropical Fresh", "category": "fruits", "price": "50.00", "unit": "dozen", "image": "https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=400", "verified": true, "inStock": true},
+  {"id": "10", "name": "Apples", "brand": "Hill Station", "category": "fruits", "price": "120.00", "unit": "kg", "image": "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400", "verified": true, "inStock": true},
+  {"id": "15", "name": "Fresh Milk", "brand": "Village Dairy", "category": "dairy", "price": "60.00", "unit": "1L", "image": "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400", "verified": true, "inStock": true},
+  {"id": "19", "name": "Basmati Rice", "brand": "Swadeshi Foods", "category": "grains", "price": "120.00", "unit": "1kg", "image": "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", "verified": true, "inStock": true},
+  {"id": "41", "name": "Turmeric Powder", "brand": "Desi Delights", "category": "spices", "price": "45.00", "unit": "100g", "image": "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400", "verified": true, "inStock": true},
+  {"id": "49", "name": "Dish Soap", "brand": "Home Care Plus", "category": "household", "price": "85.00", "unit": "500ml", "image": "https://www.seriouseats.com/thmb/2kCLIL4jdWoIN5jw0KxVeRhE6nM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/sea-dish-soap-lead-image-afton-cyrus-03-58600131d574484c987c4152d9a7966e.jpeg", "verified": true, "inStock": true}
+]

@@ -1,0 +1,8 @@
+[
+  {"id": "cat1", "name": "Vegetables", "icon": "fas fa-carrot", "slug": "vegetables"},
+  {"id": "cat2", "name": "Fruits", "icon": "fas fa-apple-alt", "slug": "fruits"},
+  {"id": "cat3", "name": "Dairy", "icon": "fas fa-glass-whiskey", "slug": "dairy"},
+  {"id": "cat4", "name": "Grains & Pulses", "icon": "fas fa-seedling", "slug": "grains"},
+  {"id": "cat5", "name": "Spices", "icon": "fas fa-mortar-pestle", "slug": "spices"},
+  {"id": "cat6", "name": "Household", "icon": "fas fa-home", "slug": "household"}
+]
