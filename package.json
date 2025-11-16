@@ -1,0 +1,40 @@
+{
+  "name": "grocergo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "deploy": "pm2 start ecosystem.config.js --env production",
+    "restart": "pm2 restart grocergo",
+    "stop": "pm2 stop grocergo",
+    "list": "pm2 list",
+    "logs": "pm2 logs grocergo --lines 100",
+    "test": "jest",
+    "seed": "node utils/seeder.js -i",
+    "seed:destroy": "node utils/seeder.js -d"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.2",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.2",
+    "pg": "^8.16.3",
+    "redis": "^5.8.3",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
+  }
+}
