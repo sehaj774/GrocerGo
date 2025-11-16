@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - GrocerGo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="auth-body">
+
+  <section class="auth-section">
+    <div class="auth-left">
+      <div class="logo-container">
+        <i class="fas fa-shopping-cart"></i>
+        <h1>GrocerGo</h1>
+      </div>
+      <h1>Fresh<br>Groceries<br>Delivered to<br>Your Door</h1>
+      <p>Shop fresh produce, pantry staples, and more. Get everything delivered in under 30 minutes!</p>
+    </div>
+
+    <div class="login-card-container">
+      <div class="login-box">
+        <h3>Welcome Back!</h3>
+        <p class="subtitle">Login to continue shopping</p>
+
+        <% if (locals.errors && errors.length > 0) { %>
+            <div style="background-color: #fde2e2; border: 1px solid #f9c6c6; color: #9b1c1c; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.875rem;">
+                <strong>Error:</strong> <%= errors[0].msg %>
+            </div>
+        <% } %>
+
+        <form action="/auth/login" method="POST">
+          <input type="email" id="email" name="email" placeholder="your@email.com" value="<%= locals.oldInput ? oldInput.email : '' %>" required />
+          <input type="password" id="password" name="password" placeholder="Enter password" required />
+          <button type="submit">Login</button>
+        </form>
+        <p class="signup-link">
+            Don't have an account? <a href="/auth/register">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

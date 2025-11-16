@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Add New Brand - GrocerGo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #f7fafc; }
+        .admin-nav a[href="/admin/brands"] { background-color: var(--primary); color: white; }
+    </style>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <%- include('./partials/sidebar') %>
+
+        <main class="flex-1 p-8">
+            <h2 class="text-3xl font-bold mb-6">Add a New Local Brand</h2>
+
+            <div class="bg-white p-8 rounded-lg shadow-md max-w-lg">
+                <form action="/admin/brands/new" method="POST" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Brand Name</label>
+                        <input type="text" id="name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    </div>
+                    <div>
+                        <label for="logo" class="block text-sm font-medium text-gray-700">Logo URL</label>
+                        <input type="url" id="logo" name="logo" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    </div>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">Primary Category (e.g., Vegetables, Dairy)</label>
+                        <input type="text" id="category" name="category" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    </div>
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <a href="/admin/brands" class="px-4 py-2 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200">Cancel</a>
+                        <button type="submit" class="px-4 py-2 rounded-md text-white bg-primary hover:bg-green-700">Save Brand</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

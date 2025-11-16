@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-muted">
+
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-8">My Order History</h1>
+
+    <% if (orders.length > 0) { %>
+        <div class="space-y-6">
+            <% orders.forEach(order => { %>
+                <div class="bg-card p-6 rounded-lg shadow-md border border-border">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div>
+                            <h2 class="font-bold text-lg">Order ID: <span class="font-normal text-muted-foreground text-sm">#<%= order._id.toString().slice(-8) %></span></h2>
+                            <p class="text-sm text-muted-foreground">Placed on: <%= new Date(order.orderDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                        </div>
+                        <span class="text-lg font-bold text-primary mt-2 sm:mt-0">₹<%= order.totalAmount.toFixed(2) %></span>
+                    </div>
+                    <div class="border-t border-border my-4"></div>
+                    <div class="flex justify-between items-center">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
+                            <%= order.status %>
+                        </span>
+                        <a href="/orders/<%= order._id %>" class="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold text-sm hover:bg-green-700">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div class="text-center py-16 bg-card rounded-lg">
+            <p class="text-muted-foreground">You haven't placed any orders yet.</p>
+            <a href="/products" class="mt-4 inline-block bg-primary text-primary-foreground px-6 py-2 rounded-lg">Start Shopping</a>
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>
+
+</body>
+</html>
+

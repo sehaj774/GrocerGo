@@ -1,0 +1,25 @@
+<div class="product-card-container">
+    <div class="product-card" data-testid="card-product-<%= product.id %>">
+        <div class="relative">
+            <img src="<%= product.image %>" 
+                 alt="<%= product.name %>" 
+                 data-testid="img-product-<%= product.id %>" />
+            <% if (product.verified) { %>
+                <div class="verified-badge">✓ Verified</div>
+            <% } %>
+        </div>
+        <h3 data-testid="text-product-name-<%= product.id %>"><%= product.name %></h3>
+        <p class="brand-text" data-testid="text-product-brand-<%= product.id %>"><%= product.brand ? product.brand.name : 'Unknown Brand' %></p> 
+        <div class="price-section">
+            <div>
+                <span class="price" data-testid="text-product-price-<%= product.id %>">₹<%= product.price.toFixed(2) %></span>
+                <span class="unit">/ <%= product.unit %></span>
+            </div>
+            <button class="add-to-cart-btn" 
+                    data-product-id="<%= product._id %>" 
+                    data-testid="button-add-to-cart-<%= product.id %>">
+                Add
+            </button>
+        </div>
+    </div>
+</div>

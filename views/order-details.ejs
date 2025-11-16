@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Progress Bar Styles */
+        .progress-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 30px; }
+        .progress-step { text-align: center; position: relative; z-index: 1; width: 25%; }
+        .progress-step .step-icon { width: 40px; height: 40px; border-radius: 50%; background-color: #e2e8f0; color: #a0aec0; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px; border: 3px solid #e2e8f0; transition: all 0.3s ease; }
+        .progress-step .step-label { font-size: 0.8rem; color: #a0aec0; transition: all 0.3s ease; }
+        
+        .progress-bar { position: absolute; top: 18px; left: 12.5%; width: 75%; height: 4px; background-color: #e2e8f0; z-index: 0; }
+        .progress-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background-color: var(--primary); transition: width 0.5s ease; width: 0%; } /* Start at 0% */
+
+        /* Active Step Styles */
+        .progress-step.active .step-icon { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .progress-step.active .step-label { color: var(--foreground); font-weight: 600; }
+
+        /* Styles for completed steps before active */
+        .progress-step.completed .step-icon { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .progress-step.completed .step-label { color: #a0aec0; } /* Keep label muted for completed */
+
+    </style>
+</head>
+<body class="bg-muted">
+
+<%- include('partials/header') %>
+
+<div class="container mx-auto px-4 py-12" id="order-details-page" data-order-id="<%= order._id %>">
+    <a href="/orders" class="text-primary hover:underline mb-6 inline-block">&larr; Back to My Orders</a>
+    <h1 class="text-3xl font-bold mb-2">Order Tracking</h1>
+    <p class="text-muted-foreground mb-8">Order #<%= order._id.toString().slice(-8) %></p>
+
+    <div class="bg-card p-6 rounded-lg shadow-md mb-8">
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+            <div class="progress-step" data-status="Processing">
+                <div class="step-icon"><i class="fas fa-receipt"></i></div>
+                <div class="step-label">Processing</div>
+            </div>
+            <div class="progress-step" data-status="Shipped">
+                <div class="step-icon"><i class="fas fa-box"></i></div>
+                <div class="step-label">Shipped</div>
+            </div>
+            <div class="progress-step" data-status="Out for Delivery">
+                <div class="step-icon"><i class="fas fa-truck"></i></div>
+                <div class="step-label">Out for Delivery</div>
+            </div>
+            <div class="progress-step" data-status="Delivered">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <div class="step-label">Delivered</div>
+            </div>
+        </div>
+        
+        <div id="driver-info" class="text-center mt-4 <%= (order.status === 'Shipped' || order.status === 'Out for Delivery') && order.driverName ? '' : 'hidden' %>">
+            <p><i class="fas fa-motorcycle mr-2 text-primary"></i>Your order is being delivered by <strong id="driver-name-display"><%= order.driverName || '' %></strong>.</p>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2 bg-card p-6 rounded-lg shadow-md border border-border">
+            <h2 class="font-bold text-xl mb-4">Items Ordered</h2>
+            <div class="space-y-4">
+                <% order.products.forEach(item => { %>
+                    <div class="flex items-center space-x-4">
+                        <img src="<%= item.product.image %>" alt="<%= item.product.name %>" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <p class="font-semibold"><%= item.product.name %></p>
+                            <p class="text-sm text-muted-foreground">Qty: <%= item.quantity %></p>
+                        </div>
+                        <span class="font-semibold">₹<%= (item.product.price * item.quantity).toFixed(2) %></span>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <div class="space-y-6">
+            <div class="bg-card p-6 rounded-lg shadow-md border border-border">
+                <h2 class="font-bold text-xl mb-4">Order Summary</h2>
+                <div class="space-y-2 text-muted-foreground">
+                    <div class="flex justify-between"><span>Subtotal:</span> <span>₹<%= order.subtotal.toFixed(2) %></span></div>
+                    <div class="flex justify-between"><span>Delivery Fee:</span><span><%= order.deliveryFee === 0 ? 'FREE' : `₹${order.deliveryFee.toFixed(2)}` %></span></div>
+                    <div class="flex justify-between <%= (order.tipAmount || 0) > 0 ? '' : 'hidden' %>" id="tip-summary-line">
+                        <span>Tip Added:</span><span id="tip-summary-amount">₹<%= (order.tipAmount || 0).toFixed(2) %></span>
+                    </div>
+                    <div class="border-t border-border my-2"></div>
+                    <div class="flex justify-between font-bold text-foreground text-lg">
+                        <span>Total:</span> <span class="text-primary">₹<%= (order.totalAmount + (order.tipAmount || 0)).toFixed(2) %></span> </div>
+                </div>
+            </div>
+            
+             <div id="tip-section" class="bg-card p-6 rounded-lg shadow-md border border-border <%= order.status === 'Delivered' ? '' : 'hidden' %>">
+                <h3 class="font-bold text-xl mb-2">Add a Tip for Your Driver?</h3>
+                <p class="text-sm text-muted-foreground mb-4">Tips go directly to the delivery person.</p>
+                <div class="flex space-x-2 mb-2">
+                    <button class="tip-btn border px-3 py-1 rounded hover:bg-gray-100" data-amount="10">₹10</button>
+                    <button class="tip-btn border px-3 py-1 rounded hover:bg-gray-100" data-amount="20">₹20</button>
+                    <button class="tip-btn border px-3 py-1 rounded hover:bg-gray-100" data-amount="50">₹50</button>
+                    <input type="number" id="custom-tip" placeholder="Custom" class="border p-1 rounded w-20 text-sm">
+                </div>
+                <button id="add-tip-btn" class="w-full bg-green-500 text-white font-semibold py-2 rounded hover:bg-green-600 disabled:opacity-50" disabled>Add Tip</button>
+                <p id="tip-message" class="text-sm text-green-600 mt-2 text-center"></p>
+            </div>
+
+            <div class="bg-card p-6 rounded-lg shadow-md border border-border">
+                <h3 class="font-bold text-xl mb-2">Shipping Address</h3>
+                <p class="text-sm text-muted-foreground"><%= order.shippingAddress %></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const socket = io();
+        const page = document.getElementById('order-details-page');
+        const orderId = page.dataset.orderId;
+        const driverInfoDiv = document.getElementById('driver-info');
+        const driverNameDisplay = document.getElementById('driver-name-display');
+        const tipSection = document.getElementById('tip-section');
+        const addTipBtn = document.getElementById('add-tip-btn');
+        const customTipInput = document.getElementById('custom-tip');
+        const tipMessage = document.getElementById('tip-message');
+        const tipSummaryLine = document.getElementById('tip-summary-line');
+        const tipSummaryAmount = document.getElementById('tip-summary-amount');
+        let selectedTipAmount = 0;
+
+        // --- Progress Bar Logic ---
+        const steps = document.querySelectorAll('.progress-step');
+        const progressBarFill = document.getElementById('progress-fill');
+        const statusOrder = ['Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
+
+        function updateProgressBar(currentStatus) {
+            const currentIndex = statusOrder.indexOf(currentStatus);
+            if (currentIndex === -1) return;
+
+            steps.forEach((step, index) => {
+                const stepStatus = step.dataset.status;
+                step.classList.remove('active', 'completed'); // Reset classes
+
+                if (index < currentIndex) {
+                    step.classList.add('completed');
+                } else if (index === currentIndex) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Calculate progress bar width (e.g., 0%, 33%, 66%, 100%)
+            const progressPercentage = (currentIndex / (statusOrder.length - 1)) * 100;
+            progressBarFill.style.width = `${progressPercentage}%`;
+
+            // Show tip section if delivered
+            if (currentStatus === 'Delivered') {
+                tipSection.classList.remove('hidden');
+            } else {
+                 tipSection.classList.add('hidden');
+            }
+        }
+
+        // Initialize progress bar on page load
+        updateProgressBar('<%= order.status %>');
+
+        // --- WebSocket Listener ---
+        socket.on('orderStatusUpdate', (data) => {
+            if (data.orderId === orderId) {
+                console.log('Status updated:', data);
+                updateProgressBar(data.newStatus); // Update progress bar
+
+                // Update driver info
+                if ((data.newStatus === 'Shipped' || data.newStatus === 'Out for Delivery') && data.driverName) {
+                    driverNameDisplay.textContent = data.driverName;
+                    driverInfoDiv.classList.remove('hidden');
+                } else {
+                     driverInfoDiv.classList.add('hidden');
+                }
+            }
+        });
+
+        // --- Tip Selection Logic ---
+        document.querySelectorAll('.tip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedTipAmount = parseFloat(btn.dataset.amount);
+                customTipInput.value = ''; // Clear custom input
+                addTipBtn.disabled = false;
+                // Optional: Add visual feedback for selected button
+                 document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('bg-green-200'));
+                 btn.classList.add('bg-green-200');
+            });
+        });
+
+        customTipInput.addEventListener('input', () => {
+            selectedTipAmount = parseFloat(customTipInput.value) || 0;
+            addTipBtn.disabled = selectedTipAmount <= 0;
+            // Optional: Remove selection from buttons if custom tip is entered
+            document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('bg-green-200'));
+        });
+
+        // --- Add Tip Button Logic ---
+        addTipBtn.addEventListener('click', async () => {
+            if (selectedTipAmount <= 0) return;
+
+            addTipBtn.disabled = true;
+            addTipBtn.textContent = 'Adding...';
+
+            try {
+                const response = await fetch(`/api/orders/${orderId}/tip`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tipAmount: selectedTipAmount })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    tipMessage.textContent = `Tip of ₹${result.tipAmount.toFixed(2)} added! Thank you!`;
+                    // Update summary display
+                    tipSummaryAmount.textContent = `₹${result.tipAmount.toFixed(2)}`;
+                    tipSummaryLine.classList.remove('hidden');
+                    // Maybe update total amount display too? (Depends if needed)
+                } else {
+                    tipMessage.textContent = 'Failed to add tip.';
+                    addTipBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Tip error:', error);
+                tipMessage.textContent = 'An error occurred.';
+                addTipBtn.disabled = false;
+            } finally {
+                 addTipBtn.textContent = 'Add Tip';
+                 // Keep button disabled after successful tip? Or allow modification? For now, we'll keep it disabled.
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

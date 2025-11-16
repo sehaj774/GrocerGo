@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GrocerGo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #f7fafc; }
+        .admin-nav a[href="/admin/dashboard"] { background-color: var(--primary); color: white; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <%- include('./partials/sidebar') %>
+
+        <main class="flex-1 p-8">
+            <h2 class="text-3xl font-bold mb-6">Dashboard</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-gray-500 font-semibold">Total Revenue</h3>
+                    <p class="text-3xl font-bold mt-2" id="totalRevenue">₹0.00</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-gray-500 font-semibold">Top Selling Products</h3>
+                    <ul id="top-products-list" class="space-y-4 mt-4">
+                        <li class="text-muted-foreground">Loading...</li>
+                    </ul>
+                </div>
+
+                </div>
+        
+            <div class="bg-white p-6 rounded-lg shadow-md mt-8">
+                <h3 class="font-bold mb-4 text-xl">Sales Over Time</h3>
+                <div>
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // --- Part 1: WebSocket Notification Listener ---
+            const socket = io();
+            socket.on('newOrder', (data) => {
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.top = '20px';
+                notification.style.right = '20px';
+                notification.style.backgroundColor = '#22c55e';
+                notification.style.color = 'white';
+                notification.style.padding = '1rem';
+                notification.style.borderRadius = '0.5rem';
+                notification.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                notification.style.zIndex = '1000';
+                notification.innerHTML = `<strong>New Order Received!</strong><br>From: ${data.user}<br>Total: ₹${data.totalAmount.toFixed(2)}`;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => { notification.remove(); }, 5000);
+            });
+
+            // --- Part 2: Analytics Chart Fetch and Render ---
+            async function loadStats() {
+                try {
+                    const response = await fetch('/admin/api/stats');
+                    const stats = await response.json();
+
+                    // Update the Total Revenue card
+                    document.getElementById('totalRevenue').textContent = `₹${stats.totalRevenue.toFixed(2)}`;
+                    
+                    // Prepare data for Chart.js
+                    const labels = stats.salesByDay.map(day => day._id);
+                    const data = stats.salesByDay.map(day => day.totalSales);
+
+                    // Render the chart
+                    const ctx = document.getElementById('salesChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Revenue per Day',
+                                data: data,
+                                borderColor: 'rgb(34, 197, 94)',
+                                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                fill: true,
+                                tension: 0.2
+                            }]
+                        }
+                    });
+                } catch (error) {
+                    console.error('Failed to load dashboard stats:', error);
+                }
+            }
+
+            // --- Part 3: Leaderboard Fetch --- // <-- ADDED THIS BLOCK
+            async function loadLeaderboard() {
+                try {
+                    const response = await fetch('/admin/api/leaderboard');
+                    const data = await response.json();
+                    const listEl = document.getElementById('top-products-list');
+
+                    if (data.success && data.leaderboard.length > 0) {
+                        listEl.innerHTML = ''; // Clear 'Loading...'
+                        data.leaderboard.forEach(product => {
+                            if (!product) return; // Skip if a product was deleted but still in Redis
+                            listEl.innerHTML += `
+                                <li class="flex items-center space-x-3">
+                                    <img src="${product.image}" alt="${product.name}" class="w-10 h-10 rounded-lg object-cover">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-semibold truncate">${product.name}</p>
+                                        <p class="text-sm text-muted-foreground">Sold: ${product.score}</p>
+                                    </div>
+                                </li>
+                            `;
+                        });
+                    } else {
+                        listEl.innerHTML = '<li class="text-muted-foreground">No sales data yet.</li>';
+                    }
+                } catch (error) {
+                    console.error('Failed to load leaderboard:', error);
+                    document.getElementById('top-products-list').innerHTML = '<li class="text-red-500">Error loading data.</li>';
+                }
+            }
+
+            // Load all data on page load
+            loadStats();
+            loadLeaderboard();
+        });
+    </script>
+</body>
+</html>

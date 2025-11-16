@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - GrocerGo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #f7fafc; }
+        .admin-nav a[href="/admin/orders"] { background-color: var(--primary); color: white; }
+    </style>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <%- include('./partials/sidebar') %>
+
+        <main class="flex-1 p-8">
+            <h2 class="text-3xl font-bold mb-6">Manage Orders</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="p-4">Order ID</th>
+                            <th class="p-4">Customer</th>
+                            <th class="p-4">Date</th>
+                            <th class="p-4">Total</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr class="border-b">
+                                <td class="p-4 font-mono text-sm">#<%= order._id.toString().slice(-8) %></td>
+                                <td class="p-4"><%= order.user.name %></td>
+                                <td class="p-4"><%= new Date(order.orderDate).toLocaleDateString() %></td>
+                                <td class="p-4 font-semibold">₹<%= order.totalAmount.toFixed(2) %></td>
+                                <td class="p-4">
+                                    <%
+                                      let statusClass = 'bg-yellow-200 text-yellow-800'; // Default class
+                                      if (order.status === 'Delivered') {
+                                        statusClass = 'bg-green-200 text-green-800';
+                                      } else if (order.status === 'Shipped') {
+                                        statusClass = 'bg-blue-200 text-blue-800';
+                                      } else if (order.status === 'Cancelled') {
+                                        statusClass = 'bg-red-200 text-red-800';
+                                      }
+                                    %>
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full <%= statusClass %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                                <td class="p-4 text-right">
+                                    <a href="/admin/orders/<%= order._id %>" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300">View</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

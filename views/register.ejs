@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - GrocerGo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="auth-body register-gradient-bg">
+
+  <section class="auth-section">
+    <div class="auth-left">
+      <div class="logo-container" style="color: #146914;"> <i class="fas fa-shopping-cart"></i>
+        <h1>GrocerGo</h1>
+      </div>
+      <h1 style="color: #12b45b;">Join GrocerGo!</h1>
+      <p style="color: #12b45b; opacity: 0.9;">
+        Sign up to support local brands and get the freshest produce delivered to your door.
+      </p>
+    </div>
+
+    <div class="login-card-container">
+      <div class="login-box">
+        <h3>Create Account</h3>
+        <p class="subtitle">Get started in just a few steps</p>
+
+        <% if (locals.errors && errors.length > 0) { %>
+            <div style="background-color: #fde2e2; border: 1px solid #f9c6c6; color: #9b1c1c; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.875rem;">
+                <strong style="font-weight: 600;">Please fix the errors:</strong>
+                <ul style="list-style-type: disc; list-style-position: inside; margin-top: 0.5rem;">
+                    <% errors.forEach(function(error) { %>
+                        <li><%= error.msg %></li>
+                    <% }); %>
+                </ul>
+            </div>
+        <% } %>
+
+        <form action="/auth/register" method="POST">
+          <input type="text" id="name" name="name" placeholder="Full Name" value="<%= locals.oldInput ? oldInput.name : '' %>" required />
+          <input type.ejs="email" id="email" name="email" placeholder="your@email.com" value="<%= locals.oldInput ? oldInput.email : '' %>" required />
+          <input type="password" id="password" name="password" placeholder="Password (min. 6 characters)" required />
+          <button type="submit">Create Account</button>
+        </form>
+        <p class="signup-link">
+            Already have an account? <a href="/auth/login">Log in</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
