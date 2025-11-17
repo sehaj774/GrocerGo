@@ -32,4 +32,5 @@ describe('Authentication API', () => {
       })
       .expect(400); // Expect a bad request status code
   });
+
 });
