@@ -7,175 +7,344 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-muted">
+<body class="bg-background text-foreground font-sans">
+
 <%- include('partials/header') %>
-<div class="container mx-auto px-4 py-12">
-    <h1 class="text-3xl font-bold mb-8">Checkout</h1>
-    <div class="grid lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 space-y-8">
-            <div class="bg-card p-6 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-map-marker-alt mr-3 text-primary"></i>Shipping Address
-                </h2>
-                <div id="address-list" class="space-y-3 mb-4">
-                    <% addresses.forEach(addr => { %>
+
+<!-- HERO -->
+<section class="checkout-hero">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+                <h1 class="checkout-title">Checkout</h1>
+                <p class="checkout-subtitle">
+                    Confirm your address, choose a payment method, and we’ll deliver your order in minutes.
+                </p>
+            </div>
+            <div class="checkout-hero-right">
+                <span class="checkout-hero-chip">
+                    <i class="fas fa-lock"></i>
+                    <span>Secure & encrypted checkout</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- LEFT: Address + Payment -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Shipping Address -->
+                <div class="bg-card p-6 rounded-lg shadow-md border border-border">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-3 text-primary"></i>
+                        Shipping address
+                    </h2>
+
+                    <div id="address-list" class="space-y-3 mb-4">
+                        <% if (addresses && addresses.length > 0) { %>
+                            <% addresses.forEach(addr => { %>
+                                <label class="selectable-box">
+                                    <input 
+                                        type="radio" 
+                                        name="selectedAddress" 
+                                        value="<%= addr._id %>" 
+                                        class="sr-only"
+                                    >
+                                    <div class="selectable-box-inner">
+                                        <i class="fas fa-home selectable-box-icon"></i>
+                                        <div class="selectable-box-content">
+                                            <p class="font-semibold">
+                                                <%= addr.street %>, <%= addr.city %>
+                                            </p>
+                                            <p class="text-muted-foreground text-sm">
+                                                <%= addr.state %> - <%= addr.pincode %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </label>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="text-sm text-muted-foreground mb-2">
+                                You don’t have any saved addresses yet. Add one to continue.
+                            </p>
+                        <% } %>
+                    </div>
+
+                    <button id="add-address-btn" class="text-primary font-semibold text-sm">
+                        + Add a new address
+                    </button>
+                    
+                    <form 
+                        id="add-address-form" 
+                        class="hidden mt-4 space-y-4 border-t pt-4"
+                    >
+                        <input 
+                            type="text" 
+                            name="street" 
+                            placeholder="Street address" 
+                            required 
+                            class="w-full border p-2 rounded"
+                        >
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <input 
+                                type="text" 
+                                name="city" 
+                                placeholder="City" 
+                                required 
+                                class="w-full border p-2 rounded"
+                            >
+                            <input 
+                                type="text" 
+                                name="state" 
+                                placeholder="State" 
+                                required 
+                                class="w-full border p-2 rounded"
+                            >
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <input 
+                                type="text" 
+                                name="pincode" 
+                                placeholder="Pincode" 
+                                required 
+                                maxlength="6" 
+                                class="w-full border p-2 rounded"
+                            >
+                            <input 
+                                type="text" 
+                                name="phone" 
+                                placeholder="Phone number" 
+                                required 
+                                maxlength="10" 
+                                class="w-full border p-2 rounded"
+                            >
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button 
+                                type="button" 
+                                id="cancel-add-address" 
+                                class="px-4 py-2 bg-gray-200 rounded text-sm"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                type="submit" 
+                                class="px-4 py-2 bg-primary text-primary-foreground rounded text-sm"
+                            >
+                                Save address
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Payment Method -->
+                <div class="bg-card p-6 rounded-lg shadow-md border border-border">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-credit-card mr-3 text-primary"></i>
+                        Payment method
+                    </h2>
+                    <div class="space-y-3">
                         <label class="selectable-box">
-                            <input type="radio" name="selectedAddress" value="<%= addr._id %>" class="sr-only">
+                            <input 
+                                type="radio" 
+                                name="payment" 
+                                class="sr-only" 
+                                checked
+                            >
                             <div class="selectable-box-inner">
-                                <i class="fas fa-home selectable-box-icon"></i>
+                                <i class="fas fa-money-bill-wave selectable-box-icon"></i>
                                 <div class="selectable-box-content">
-                                    <p class="font-semibold"><%= addr.street %>, <%= addr.city %></p>
-                                    <p class="text-muted-foreground text-sm"><%= addr.state %> - <%= addr.pincode %></p>
+                                    <p class="font-semibold text-sm">Cash on delivery</p>
+                                    <p class="text-xs text-muted-foreground">
+                                        Pay in cash when your order arrives.
+                                    </p>
                                 </div>
                             </div>
                         </label>
+
+                        <label class="selectable-box disabled">
+                            <input 
+                                type="radio" 
+                                name="payment" 
+                                class="sr-only" 
+                                disabled
+                            >
+                            <div class="selectable-box-inner">
+                                <i class="fas fa-mobile-alt selectable-box-icon"></i>
+                                <div class="selectable-box-content">
+                                    <p class="font-semibold text-sm">UPI (coming soon)</p>
+                                    <p class="text-xs text-muted-foreground">
+                                        Pay instantly via UPI apps.
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="selectable-box disabled">
+                            <input 
+                                type="radio" 
+                                name="payment" 
+                                class="sr-only" 
+                                disabled
+                            >
+                            <div class="selectable-box-inner">
+                                <i class="fas fa-credit-card selectable-box-icon"></i>
+                                <div class="selectable-box-content">
+                                    <p class="font-semibold text-sm">Cards (coming soon)</p>
+                                    <p class="text-xs text-muted-foreground">
+                                        Save cards securely for one-tap checkout.
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Order Summary -->
+            <aside class="bg-card p-6 rounded-lg shadow-md h-fit lg:sticky top-24 border border-border checkout-summary-card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-receipt text-primary"></i>
+                    Order summary
+                </h2>
+
+                <div class="space-y-2 mb-4 border-b pb-4 max-h-60 overflow-y-auto">
+                    <% cart.forEach(item => { %>
+                        <div class="flex justify-between text-sm">
+                            <span class="truncate pr-2">
+                                <%= item.product.name %> (x<%= item.quantity %>)
+                            </span>
+                            <span class="font-medium">
+                                ₹<%= (item.product.price * item.quantity).toFixed(2) %>
+                            </span>
+                        </div>
                     <% }) %>
                 </div>
-                <button id="add-address-btn" class="text-primary font-semibold">+ Add a new address</button>
-                
-                <form id="add-address-form" class="hidden mt-4 space-y-4 border-t pt-4">
-                    <input type="text" name="street" placeholder="Street Address" required class="w-full border p-2 rounded">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" name="city" placeholder="City" required class="w-full border p-2 rounded">
-                        <input type="text" name="state" placeholder="State" required class="w-full border p-2 rounded">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" name="pincode" placeholder="Pincode" required maxlength="6" class="w-full border p-2 rounded">
-                        <input type="text" name="phone" placeholder="Phone Number" required maxlength="10" class="w-full border p-2 rounded">
-                    </div>
-                    <div class="flex justify-end space-x-2">
-                        <button type="button" id="cancel-add-address" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Save Address</button>
-                    </div>
-                </form>
-            </div>
-            
-            <div class="bg-card p-6 rounded-lg shadow-md">
-                <h2 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-credit-card mr-3 text-primary"></i>Payment Method
-                </h2>
-                <div class="space-y-3">
-                    <label class="selectable-box">
-                        <input type="radio" name="payment" class="sr-only" checked>
-                        <div class="selectable-box-inner">
-                            <i class="fas fa-money-bill-wave selectable-box-icon"></i>
-                            <span class="selectable-box-content font-semibold">Cash on Delivery</span>
-                        </div>
-                    </label>
-                    <label class="selectable-box disabled">
-                        <input type="radio" name="payment" class="sr-only" disabled>
-                        <div class="selectable-box-inner">
-                            <i class="fas fa-mobile-alt selectable-box-icon"></i>
-                            <span class="selectable-box-content font-semibold">UPI (Coming Soon)</span>
-                        </div>
-                    </label>
-                    <label class="selectable-box disabled">
-                        <input type="radio" name="payment" class="sr-only" disabled>
-                        <div class="selectable-box-inner">
-                            <i class="fas fa-credit-card selectable-box-icon"></i>
-                            <span class="selectable-box-content font-semibold">Debit/Credit Card (Coming Soon)</span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-        </div>
 
-        <div class="bg-card p-6 rounded-lg shadow-md h-fit lg:sticky top-24">
-            <h2 class="text-xl font-bold mb-4">Order Summary</h2>
-            <div class="space-y-2 mb-4 border-b pb-4">
-                <% cart.forEach(item => { %>
-                <div class="flex justify-between text-sm">
-                    <span><%= item.product.name %> (x<%= item.quantity %>)</span>
-                    <span class="font-medium">₹<%= (item.product.price * item.quantity).toFixed(2) %></span>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Subtotal</span>
+                        <span>₹<%= subtotal.toFixed(2) %></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Delivery fee</span>
+                        <span>
+                            <%= deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee.toFixed(2) %>
+                        </span>
+                    </div>
+                    <div class="border-t my-2"></div>
+                    <div class="flex justify-between font-bold text-lg">
+                        <span>Total</span>
+                        <span class="text-primary">₹<%= total.toFixed(2) %></span>
+                    </div>
                 </div>
-                <% }) %>
-            </div>
-            <div class="space-y-2">
-                <div class="flex justify-between"><span class="text-muted-foreground">Subtotal</span><span>₹<%= subtotal.toFixed(2) %></span></div>
-                <div class="flex justify-between"><span class="text-muted-foreground">Delivery Fee</span><span><%= deliveryFee === 0 ? 'FREE' : `₹${deliveryFee.toFixed(2)}` %></span></div>
-                <div class="border-t my-2"></div>
-                <div class="flex justify-between font-bold text-lg"><span >Total</span><span class="text-primary">₹<%= total.toFixed(2) %></span></div>
-            </div>
-            <button id="place-order-btn" class="w-full mt-6 bg-primary text-primary-foreground py-3 rounded-lg font-bold hover:bg-green-700">Place Order</button>
+
+                <p class="checkout-note">
+                    You’ll pay <strong>₹<%= total.toFixed(2) %></strong> in cash when your order is delivered.
+                </p>
+
+                <button 
+                    id="place-order-btn" 
+                    class="checkout-place-btn"
+                >
+                    Place order
+                </button>
+            </aside>
         </div>
     </div>
-</div>
+</section>
+
 <%- include('partials/footer') %>
+<%- include('partials/cart-sidebar') %>
 
 <script>
-    // --- Address Form Toggle ---
-    const addAddressBtn = document.getElementById('add-address-btn');
-    const addAddressForm = document.getElementById('add-address-form');
-    const cancelAddressBtn = document.getElementById('cancel-add-address');
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Address Form Toggle ---
+        const addAddressBtn = document.getElementById('add-address-btn');
+        const addAddressForm = document.getElementById('add-address-form');
+        const cancelAddressBtn = document.getElementById('cancel-add-address');
 
-    addAddressBtn.addEventListener('click', () => {
-        addAddressForm.classList.remove('hidden');
-        addAddressBtn.classList.add('hidden');
-    });
-    cancelAddressBtn.addEventListener('click', () => {
-        addAddressForm.classList.add('hidden');
-        addAddressBtn.classList.remove('hidden');
-    });
-
-    // --- Add New Address with Fetch API ---
-    addAddressForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData(addAddressForm);
-        const addressData = Object.fromEntries(formData.entries());
-
-        try {
-            const response = await fetch('/api/user/addresses', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(addressData)
+        if (addAddressBtn && addAddressForm && cancelAddressBtn) {
+            addAddressBtn.addEventListener('click', () => {
+                addAddressForm.classList.remove('hidden');
+                addAddressBtn.classList.add('hidden');
             });
-            const result = await response.json();
-            if (result.success) {
-                // Reload the page to show the new address and have it selectable.
-                // A more advanced implementation could add it dynamically without a reload.
-                window.location.reload();
-            } else {
-                alert('Failed to save address.');
-            }
-        } catch (error) {
-            console.error('Error saving address:', error);
-        }
-    });
 
-    // --- Place Order Logic ---
-    const placeOrderBtn = document.getElementById('place-order-btn');
-    placeOrderBtn.addEventListener('click', async () => {
-        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
-        if (!selectedAddress) {
-            alert('Please select a shipping address.');
-            return;
+            cancelAddressBtn.addEventListener('click', () => {
+                addAddressForm.classList.add('hidden');
+                addAddressBtn.classList.remove('hidden');
+            });
+
+            // --- Add New Address with Fetch API ---
+            addAddressForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(addAddressForm);
+                const addressData = Object.fromEntries(formData.entries());
+
+                try {
+                    const response = await fetch('/api/user/addresses', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(addressData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Failed to save address.');
+                    }
+                } catch (error) {
+                    console.error('Error saving address:', error);
+                }
+            });
         }
 
-        placeOrderBtn.disabled = true;
-        placeOrderBtn.textContent = 'Placing Order...';
+        // --- Place Order Logic ---
+        const placeOrderBtn = document.getElementById('place-order-btn');
+        if (placeOrderBtn) {
+            placeOrderBtn.addEventListener('click', async () => {
+                const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+                if (!selectedAddress) {
+                    alert('Please select a shipping address.');
+                    return;
+                }
 
-        try {
-            const response = await fetch('/api/orders/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ addressId: selectedAddress.value })
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Placing order...';
+
+                try {
+                    const response = await fetch('/api/orders/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ addressId: selectedAddress.value })
+                    });
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        window.location.href = `/orders/${data.orderId}`;
+                    } else {
+                        alert(data.message || 'An error occurred.');
+                        placeOrderBtn.disabled = false;
+                        placeOrderBtn.textContent = 'Place order';
+                    }
+                } catch (error) {
+                    console.error('Checkout error:', error);
+                    alert('A network error occurred.');
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.textContent = 'Place order';
+                }
             });
-            const data = await response.json();
-
-            if (response.ok) {
-                window.location.href = `/orders/${data.orderId}`; // Redirect to order success page
-            } else {
-                alert(data.message || 'An error occurred.');
-                placeOrderBtn.disabled = false;
-                placeOrderBtn.textContent = 'Place Order';
-            }
-        } catch (error) {
-            console.error('Checkout error:', error);
-            alert('A network error occurred.');
-            placeOrderBtn.disabled = false;
-            placeOrderBtn.textContent = 'Place Order';
         }
     });
 </script>
+<script src="/js/app.js"></script>
 </body>
 </html>
