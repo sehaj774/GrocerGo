@@ -11,27 +11,61 @@
 
 <%- include('partials/header') %>
 
-<section class="bg-gradient-to-r from-primary to-green-700 text-white py-8">
+<% const productCount = products ? products.length : 0; %>
+
+<!-- CATEGORY HERO -->
+<section class="category-hero">
     <div class="container mx-auto px-4">
-        <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                <i class="<%= category.icon %> text-white text-2xl"></i>
+        <div class="flex items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="category-hero-icon-shell">
+                    <i class="<%= category.icon %>"></i>
+                </div>
+                <div>
+                    <h1 class="category-hero-title"><%= category.name %></h1>
+                    <p class="category-hero-subtitle">
+                        Fresh <%= category.name.toLowerCase() %> from verified local suppliers near you.
+                    </p>
+                    <p class="category-hero-meta">
+                        <span><%= productCount %></span> item<%= productCount === 1 ? '' : 's' %> available in this category
+                    </p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-3xl font-bold"><%= category.name %></h1>
-                <p class="text-white/80">Fresh <%= category.name.toLowerCase() %> from verified local suppliers</p>
+
+            <div class="hidden md:flex category-hero-right">
+                <span class="category-hero-chip">
+                    <i class="fas fa-bolt"></i>
+                    <span>Fast delivery in 10–30 minutes</span>
+                </span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-8">
+<!-- PRODUCTS GRID -->
+<section class="py-8 category-section">
     <div class="container mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <% products.forEach(product => { %>
-                <%- include('partials/product-card', { product }) %>
-            <% }) %>
-        </div>
+        <% if (!products || products.length === 0) { %>
+            <div class="category-empty-state">
+                <div class="category-empty-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h2>No products in this category yet</h2>
+                <p class="category-empty-text">
+                    We’re onboarding more <%= category.name.toLowerCase() %> from local brands. 
+                    Try exploring other categories or check back soon.
+                </p>
+                <a href="/products" class="category-empty-cta">
+                    Browse all products
+                </a>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <% products.forEach(product => { %>
+                    <%- include('partials/product-card', { product }) %>
+                <% }) %>
+            </div>
+        <% } %>
     </div>
 </section>
 
