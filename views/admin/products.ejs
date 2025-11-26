@@ -4,90 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Products - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body { background-color: #f7fafc; }
-        .admin-nav a.active { background-color: var(--primary); color: white; }
-
-        /* === DEFINITIVE BUTTON FIX === */
-        .actions-cell > a,
-        .actions-cell > form > button {
-            padding: 0.3rem 0.75rem;
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-            border-radius: 0.375rem; /* equivalent to rounded-md */
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 600;
-            text-align: center;
-            transition: opacity 0.2s ease-in-out;
-        }
-        .actions-cell > a:hover,
-        .actions-cell > form > button:hover {
-            opacity: 0.85;
-        }
-        /* Set distinct colors for each action */
-        .btn-edit { background-color: #f59e0b; color: white; } /* Amber 500 */
-        .btn-delete { background-color: #ef4444; color: white; } /* Red 500 */
-        .btn-verify { background-color: #22c55e; color: white; } /* Green 500 */
-        .btn-unverify { background-color: #6b7280; color: white; } /* Gray 500 */
-    </style>
 </head>
-<body>
+<body class="bg-muted text-foreground font-sans">
     <div class="flex min-h-screen">
-        <aside class="w-64 bg-white border-r">
-             <div class="p-6"><h1 class="text-2xl font-bold text-primary">GrocerGo Admin</h1></div>
-            <nav class="p-4 space-y-2 admin-nav">
-                <a href="/admin/dashboard" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Dashboard</a>
-                <a href="/admin/products" class="block px-4 py-2 rounded-lg active">Products</a>
-                <a href="/" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Back to Site</a>
-            </nav>
-        </aside>
-        <main class="flex-1 p-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">Manage Products</h2>
-                <a href="/admin/products/new" class="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700">Add New Product</a>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="py-2">Name</th><th>Brand</th><th>Price</th><th>Stock</th><th>Verified</th><th class="text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% products.forEach(product => { %>
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="py-4 px-2"><%= product.name %></td>
-                            <td class="py-4 px-2"><%= product.brand.name %></td>
-                            <td class="py-4 px-2">₹<%= product.price.toFixed(2) %></td>
-                            <td class="py-4 px-2"><%= product.stock %></td>
-                            <td class="py-4 px-2">
-                                <span class="font-semibold <%= product.verified ? 'text-green-600' : 'text-gray-500' %>">
-                                    <%= product.verified ? 'Yes' : 'No' %>
-                                </span>
-                            </td>
-                            <td class="py-4 px-2 actions-cell">
-                                <a href="/admin/products/<%= product._id %>/edit" class="btn-edit">Edit</a>
-                                
-                                <% if (user.role === 'ADMIN') { %>
-                                <form action="/admin/products/<%= product._id %>/verify" method="POST" class="inline">
-                                    <button type="submit" class="<%= product.verified ? 'btn-unverify' : 'btn-verify' %>">
-                                        <%= product.verified ? 'Un-verify' : 'Verify' %>
-                                    </button>
-                                </form>
+        <!-- Sidebar with active highlight -->
+        <%- include('./partials/sidebar', { currentPath: '/admin/products' }) %>
+
+        <main class="flex-1 p-6 md:p-8">
+            <div class="max-w-6xl mx-auto space-y-8">
+
+                <!-- Page header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-1">Manage Products</h2>
+                        <p class="text-sm text-muted-foreground">
+                            View, verify and maintain products listed on GrocerGo.
+                        </p>
+                    </div>
+                    <a href="/admin/products/new"
+                       class="inline-flex items-center px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm hover:bg-green-700 shadow-md">
+                        <i class="fas fa-plus mr-2 text-xs"></i>
+                        Add new product
+                    </a>
+                </div>
+
+                <!-- Products table card -->
+                <section class="bg-card p-6 rounded-xl shadow-md border border-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Verified</th>
+                                    <th class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (products && products.length) { %>
+                                    <% products.forEach(product => { %>
+                                        <tr>
+                                            <td><%= product.name %></td>
+                                            <td><%= product.brand && product.brand.name ? product.brand.name : '—' %></td>
+                                            <td>₹<%= product.price.toFixed(2) %></td>
+                                            <td><%= product.stock %></td>
+                                            <td>
+                                                <span class="font-semibold <%= product.verified ? 'text-green-600' : 'text-gray-500' %>">
+                                                    <%= product.verified ? 'Yes' : 'No' %>
+                                                </span>
+                                            </td>
+                                            <td class="admin-actions-cell">
+                                                <!-- Edit -->
+                                                <a href="/admin/products/<%= product._id %>/edit"
+                                                   class="admin-action-btn admin-action-edit">
+                                                    Edit
+                                                </a>
+
+                                                <!-- Verify / Unverify (Admin only) -->
+                                                <% if (user && user.role === 'ADMIN') { %>
+                                                    <form action="/admin/products/<%= product._id %>/verify"
+                                                          method="POST" class="inline-block">
+                                                        <button type="submit"
+                                                            class="admin-action-btn <%= product.verified ? 'admin-action-unverify' : 'admin-action-verify' %>">
+                                                            <%= product.verified ? 'Un-verify' : 'Verify' %>
+                                                        </button>
+                                                    </form>
+                                                <% } %>
+
+                                                <!-- Delete -->
+                                                <form action="/admin/products/<%= product._id %>/delete"
+                                                      method="POST"
+                                                      class="inline-block"
+                                                      onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                                    <button type="submit"
+                                                        class="admin-action-btn admin-action-delete">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center py-6 text-sm text-muted-foreground">
+                                            No products found. Try adding a new product.
+                                        </td>
+                                    </tr>
                                 <% } %>
-                            
-                                <form action="/admin/products/<%= product._id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" class="inline">
-                                    <button type="submit" class="btn-delete">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
             </div>
         </main>
     </div>
