@@ -4,40 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body { background-color: #f7fafc; }
-        .admin-nav a[href="/admin/dashboard"] { background-color: var(--primary); color: white; }
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="bg-muted text-foreground font-sans">
     <div class="flex min-h-screen">
-        <%- include('./partials/sidebar') %>
+        <!-- Sidebar with active highlight -->
+        <%- include('./partials/sidebar', { currentPath: '/admin/dashboard' }) %>
 
-        <main class="flex-1 p-8">
-            <h2 class="text-3xl font-bold mb-6">Dashboard</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-gray-500 font-semibold">Total Revenue</h3>
-                    <p class="text-3xl font-bold mt-2" id="totalRevenue">₹0.00</p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-gray-500 font-semibold">Top Selling Products</h3>
-                    <ul id="top-products-list" class="space-y-4 mt-4">
-                        <li class="text-muted-foreground">Loading...</li>
-                    </ul>
-                </div>
+        <main class="flex-1 p-6 md:p-8">
+            <div class="max-w-6xl mx-auto space-y-8">
 
-                </div>
-        
-            <div class="bg-white p-6 rounded-lg shadow-md mt-8">
-                <h3 class="font-bold mb-4 text-xl">Sales Over Time</h3>
-                <div>
-                    <canvas id="salesChart"></canvas>
-                </div>
+                <!-- Page header -->
+                <header class="space-y-2">
+                    <h2 class="text-3xl font-bold">Dashboard</h2>
+                    <p class="text-sm text-muted-foreground">
+                        Overview of key metrics, live orders and top performing products.
+                    </p>
+                </header>
+
+                <!-- Top cards -->
+                <section>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Total Revenue -->
+                        <div class="bg-card p-6 rounded-xl shadow-md border border-border">
+                            <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                Total revenue
+                            </p>
+                            <p class="text-3xl font-bold mt-2" id="totalRevenue">₹0.00</p>
+                            <p class="text-xs text-muted-foreground mt-1">
+                                Based on all completed orders.
+                            </p>
+                        </div>
+
+                        <!-- Top Selling Products -->
+                        <div class="bg-card p-6 rounded-xl shadow-md border border-border">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                    Top selling products
+                                </p>
+                                <i class="fas fa-trophy text-yellow-500 text-sm"></i>
+                            </div>
+                            <ul id="top-products-list" class="space-y-4 mt-3 text-sm">
+                                <li class="text-muted-foreground">Loading...</li>
+                            </ul>
+                        </div>
+
+                        <!-- Live orders notification hint -->
+                        <div class="bg-card p-6 rounded-xl shadow-md border border-border">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-bell text-green-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                        Live order alerts
+                                    </p>
+                                    <p class="text-xs text-muted-foreground">
+                                        Stay notified when a new order is placed.
+                                    </p>
+                                </div>
+                            </div>
+                            <p class="text-xs text-muted-foreground mt-2">
+                                A toast notification will appear in the top-right when new orders come in
+                                <span class="font-semibold"></span>.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sales chart -->
+                <section class="bg-card p-6 rounded-xl shadow-md border border-border">
+                    <h3 class="font-bold mb-4 text-lg flex items-center gap-2">
+                        <i class="fas fa-chart-line text-primary"></i>
+                        Sales over time
+                    </h3>
+                    <div>
+                        <canvas id="salesChart" height="90"></canvas>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -55,10 +101,18 @@
                 notification.style.backgroundColor = '#22c55e';
                 notification.style.color = 'white';
                 notification.style.padding = '1rem';
-                notification.style.borderRadius = '0.5rem';
-                notification.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                notification.style.borderRadius = '0.75rem';
+                notification.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
                 notification.style.zIndex = '1000';
-                notification.innerHTML = `<strong>New Order Received!</strong><br>From: ${data.user}<br>Total: ₹${data.totalAmount.toFixed(2)}`;
+                notification.style.fontSize = '0.85rem';
+                notification.style.maxWidth = '260px';
+                notification.style.lineHeight = '1.4';
+
+                notification.innerHTML = `
+                    <strong>New order received!</strong><br>
+                    <span>From: ${data.user}</span><br>
+                    <span>Total: ₹${data.totalAmount.toFixed(2)}</span>
+                `;
                 
                 document.body.appendChild(notification);
                 
@@ -72,26 +126,40 @@
                     const stats = await response.json();
 
                     // Update the Total Revenue card
-                    document.getElementById('totalRevenue').textContent = `₹${stats.totalRevenue.toFixed(2)}`;
-                    
-                    // Prepare data for Chart.js
-                    const labels = stats.salesByDay.map(day => day._id);
-                    const data = stats.salesByDay.map(day => day.totalSales);
+                    if (stats && typeof stats.totalRevenue === 'number') {
+                        document.getElementById('totalRevenue').textContent =
+                            `₹${stats.totalRevenue.toFixed(2)}`;
+                    }
 
-                    // Render the chart
+                    // Prepare data for Chart.js
+                    const labels = (stats.salesByDay || []).map(day => day._id);
+                    const data = (stats.salesByDay || []).map(day => day.totalSales);
+
                     const ctx = document.getElementById('salesChart').getContext('2d');
                     new Chart(ctx, {
                         type: 'line',
                         data: {
-                            labels: labels,
+                            labels,
                             datasets: [{
-                                label: 'Revenue per Day',
-                                data: data,
+                                label: 'Revenue per day',
+                                data,
                                 borderColor: 'rgb(34, 197, 94)',
                                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                                 fill: true,
-                                tension: 0.2
+                                tension: 0.2,
+                                pointRadius: 3,
+                                pointHoverRadius: 4
                             }]
+                        },
+                        options: {
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: { callback: value => '₹' + value }
+                                }
+                            }
                         }
                     });
                 } catch (error) {
@@ -99,7 +167,7 @@
                 }
             }
 
-            // --- Part 3: Leaderboard Fetch --- // <-- ADDED THIS BLOCK
+            // --- Part 3: Leaderboard Fetch ---
             async function loadLeaderboard() {
                 try {
                     const response = await fetch('/admin/api/leaderboard');
@@ -107,25 +175,29 @@
                     const listEl = document.getElementById('top-products-list');
 
                     if (data.success && data.leaderboard.length > 0) {
-                        listEl.innerHTML = ''; // Clear 'Loading...'
+                        listEl.innerHTML = '';
                         data.leaderboard.forEach(product => {
-                            if (!product) return; // Skip if a product was deleted but still in Redis
+                            if (!product) return; // Skip if deleted but still in Redis
                             listEl.innerHTML += `
                                 <li class="flex items-center space-x-3">
-                                    <img src="${product.image}" alt="${product.name}" class="w-10 h-10 rounded-lg object-cover">
+                                    <img src="${product.image}" alt="${product.name}"
+                                         class="w-10 h-10 rounded-lg object-cover">
                                     <div class="flex-1 min-w-0">
                                         <p class="font-semibold truncate">${product.name}</p>
-                                        <p class="text-sm text-muted-foreground">Sold: ${product.score}</p>
+                                        <p class="text-xs text-muted-foreground">
+                                            Sold: ${product.score}
+                                        </p>
                                     </div>
                                 </li>
                             `;
                         });
                     } else {
-                        listEl.innerHTML = '<li class="text-muted-foreground">No sales data yet.</li>';
+                        listEl.innerHTML = '<li class="text-muted-foreground text-sm">No sales data yet.</li>';
                     }
                 } catch (error) {
                     console.error('Failed to load leaderboard:', error);
-                    document.getElementById('top-products-list').innerHTML = '<li class="text-red-500">Error loading data.</li>';
+                    document.getElementById('top-products-list').innerHTML =
+                        '<li class="text-red-500 text-sm">Error loading data.</li>';
                 }
             }
 
