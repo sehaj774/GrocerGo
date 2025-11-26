@@ -1,27 +1,73 @@
-<div id="cart-sidebar" class="fixed inset-y-0 right-0 w-80 bg-card shadow-2xl cart-sidebar closed z-50 border-l border-border">
-    <div class="p-6 border-b border-border">
-        <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold">Your Cart</h3>
-            <button id="close-cart" class="text-muted-foreground hover:text-foreground" data-testid="button-close-cart">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
+<div
+  id="cart-sidebar"
+  class="fixed inset-y-0 right-0 w-80 bg-card shadow-2xl cart-sidebar closed z-50 border-l border-border"
+>
+  <!-- HEADER -->
+  <div class="cart-sidebar-header">
+    <div class="flex items-center justify-between gap-2">
+      <div>
+        <h3 class="text-lg font-bold">Your Cart</h3>
+        <p
+          class="text-xs text-muted-foreground mt-1"
+          id="cart-summary-line"
+        >
+          No items added yet
+        </p>
+      </div>
+
+      <button
+        id="close-cart"
+        class="text-muted-foreground hover:text-foreground transition-colors"
+        data-testid="button-close-cart"
+      >
+        <i class="fas fa-times text-lg"></i>
+      </button>
     </div>
-    
-    <div class="flex-1 overflow-y-auto p-6" id="cart-items">
-        <div class="text-center text-muted-foreground py-8" id="empty-cart">
-            <i class="fas fa-shopping-cart text-4xl mb-4"></i>
-            <p>Your cart is empty</p>
-        </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="cart-sidebar-body" id="cart-items">
+    <!-- Empty state -->
+    <div class="cart-empty-state" id="empty-cart">
+      <div class="cart-empty-icon">
+        <i class="fas fa-shopping-basket"></i>
+      </div>
+      <p class="text-sm font-medium">Your cart is empty</p>
+      <p class="text-xs text-muted-foreground">
+        Browse fresh fruits, veggies and snacks to get started.
+      </p>
     </div>
-    
-    <div class="p-6 border-t border-border" id="cart-footer" style="display: none;">
-        <div class="flex items-center justify-between mb-4">
-            <span class="text-lg font-bold">Total:</span>
-            <span class="text-xl font-bold text-primary" id="cart-total">₹0</span>
-        </div>
-        <a href="/checkout" class="block text-center w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-            Proceed to Checkout
-        </a>
+
+    <!-- When there are items, your JS will inject them here,
+         replacing the empty state. -->
+  </div>
+
+  <!-- FOOTER -->
+  <div class="cart-sidebar-footer" id="cart-footer" style="display: none;">
+    <!-- Free delivery / offer hint -->
+    <div class="cart-free-delivery">
+      <div class="cart-free-dot"></div>
+      <span class="cart-free-text">
+        Free delivery on orders above ₹199 in your area.
+      </span>
     </div>
+
+    <div class="flex items-center justify-between mt-3 mb-3">
+      <span class="text-sm font-semibold">Total</span>
+      <span
+        class="text-xl font-bold text-primary rupee"
+        id="cart-total"
+      >0</span>
+    </div>
+
+    <a
+      href="/checkout"
+      class="cart-footer-button"
+    >
+      <span>Proceed to checkout</span>
+      <span class="text-[0.7rem] opacity-80">
+        ⏱ Delivered in minutes
+      </span>
+    </a>
+  </div>
 </div>
