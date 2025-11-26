@@ -4,62 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %> - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body { background-color: #f7fafc; }
-        .admin-nav a[href="/admin/products"] { background-color: var(--primary); color: white; }
-    </style>
 </head>
-<body>
+<body class="bg-muted text-foreground font-sans">
     <div class="flex min-h-screen">
-         <%- include('./partials/sidebar') %>
-        <main class="flex-1 p-8">
-            <h2 class="text-3xl font-bold mb-6"><%= title %></h2>
-            <div class="bg-white p-8 rounded-lg shadow-md max-w-2xl">
-                <form action="<%= action %>" method="POST" class="space-y-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
-                        <input type="text" id="name" name="name" value="<%= product.name || '' %>" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    </div>
-                    <div>
-                        <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
-                        <select id="brand" name="brand" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                            <% brands.forEach(brand => { %>
-                                <option value="<%= brand._id %>" <%= (product.brand && product.brand.toString() === brand._id.toString()) ? 'selected' : '' %>>
-                                    <%= brand.name %>
-                                </option>
-                            <% }) %>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700">Category Slug (e.g., 'vegetables')</label>
-                        <input type="text" id="category" name="category" value="<%= product.category || '' %>" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-                            <input type="number" id="price" name="price" value="<%= product.price || '' %>" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+        <!-- Sidebar with active highlight -->
+        <%- include('./partials/sidebar', { currentPath: '/admin/products' }) %>
+
+        <main class="flex-1 p-6 md:p-8">
+            <div class="max-w-5xl mx-auto space-y-8">
+                <!-- Page header -->
+                <header>
+                    <h2 class="text-3xl font-bold mb-1"><%= title %></h2>
+                    <p class="text-sm text-muted-foreground">
+                        Fill in product details. Changes will reflect across the storefront.
+                    </p>
+                </header>
+
+                <!-- Form + Preview layout -->
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <!-- Form card -->
+                    <section class="bg-card border border-border shadow-md rounded-xl p-6">
+                        <form action="<%= action %>" method="POST" class="space-y-5">
+                            <!-- Product Name -->
+                            <div class="space-y-2">
+                                <label for="name" class="block text-sm font-semibold">
+                                    Product name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value="<%= product.name || '' %>"
+                                    required
+                                    placeholder="e.g., Fresh Tomatoes"
+                                >
+                            </div>
+
+                            <!-- Brand -->
+                            <div class="space-y-2">
+                                <label for="brand" class="block text-sm font-semibold">
+                                    Brand
+                                </label>
+                                <select
+                                    id="brand"
+                                    name="brand"
+                                    required
+                                >
+                                    <% brands.forEach(brand => { %>
+                                        <option
+                                            value="<%= brand._id %>"
+                                            <%= (product.brand && product.brand.toString() === brand._id.toString()) ? 'selected' : '' %>>
+                                            <%= brand.name %>
+                                        </option>
+                                    <% }) %>
+                                </select>
+                            </div>
+
+                            <!-- Category slug -->
+                            <div class="space-y-2">
+                                <label for="category" class="block text-sm font-semibold">
+                                    Category slug
+                                    <span class="text-muted-foreground text-xs">(e.g., vegetables, snacks)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="category"
+                                    name="category"
+                                    value="<%= product.category || '' %>"
+                                    required
+                                    placeholder="e.g., vegetables"
+                                >
+                            </div>
+
+                            <!-- Price + Stock -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label for="price" class="block text-sm font-semibold">
+                                        Price (₹)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="price"
+                                        name="price"
+                                        value="<%= product.price || '' %>"
+                                        step="0.01"
+                                        required
+                                        placeholder="e.g., 49.00"
+                                    >
+                                </div>
+                                <div class="space-y-2">
+                                    <label for="stock" class="block text-sm font-semibold">
+                                        Stock
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="stock"
+                                        name="stock"
+                                        value="<%= product.stock || '' %>"
+                                        required
+                                        placeholder="e.g., 100"
+                                    >
+                                </div>
+                            </div>
+
+                            <!-- Unit -->
+                            <div class="space-y-2">
+                                <label for="unit" class="block text-sm font-semibold">
+                                    Unit
+                                    <span class="text-muted-foreground text-xs">(e.g., kg, 500g, 1L)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="unit"
+                                    name="unit"
+                                    value="<%= product.unit || '' %>"
+                                    required
+                                    placeholder="e.g., 1 kg"
+                                >
+                            </div>
+
+                            <!-- Image URL -->
+                            <div class="space-y-2 mb-6">
+                                <label for="image" class="block text-sm font-semibold">Image URL</label>
+                                <input
+                                    type="url"
+                                    id="image"
+                                    name="image"
+                                    value="<%= product.image || '' %>"
+                                    required
+                                    placeholder="https://example.com/product.jpg"
+                                    class="w-full"
+                                >
+                            </div>
+
+
+                            <!-- Buttons -->
+                            <div class="flex justify-end space-x-3 pt-6">
+                                <a href="/admin/products"
+                                   class="px-4 py-2 rounded-lg bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200 transition">
+                                    Cancel
+                                </a>
+                            
+                                <button type="submit"
+                                    class="px-5 py-2.5 rounded-lg bg-primary text-white font-semibold hover:bg-green-700 transition shadow-sm">
+                                    Save product
+                                </button>
+                            </div>
+
+                        </form>
+                    </section>
+
+                    <!-- Live preview card -->
+                    <aside class="hidden md:block">
+                        <p class="text-sm font-semibold mb-3 text-muted-foreground">
+                            Live preview
+                        </p>
+                        <div class="product-card-container">
+                            <div class="product-card">
+                                <div class="relative mb-3">
+                                    <img
+                                        id="preview-image"
+                                        src="<%= product.image || 'https://via.placeholder.com/300x200?text=Product+Image' %>"
+                                        alt="Preview image"
+                                    />
+                                    <div class="verified-badge">✓ Verified</div>
+                                </div>
+                                <h3 id="preview-name">
+                                    <%= product.name || 'Product name' %>
+                                </h3>
+                                <p class="brand-text" id="preview-brand">
+                                    <% 
+                                        let selectedBrandName = '';
+                                        if (product.brand && brands && brands.length) {
+                                            const found = brands.find(b => b._id.toString() === product.brand.toString());
+                                            selectedBrandName = found ? found.name : '';
+                                        }
+                                    %>
+                                    <%= selectedBrandName || (brands && brands[0] ? brands[0].name : 'Brand name') %>
+                                </p>
+                                <div class="price-section">
+                                    <div>
+                                        <span class="price" id="preview-price">
+                                            ₹<%= (typeof product !== 'undefined' && product.price)
+                                                ? Number(product.price).toFixed(2)
+                                                : '0.00' %>
+                                        </span>
+                                        <span class="unit" id="preview-unit">
+                                            / <%= product.unit || 'unit' %>
+                                        </span>
+                                    </div>
+                                    <button type="button" class="add-to-cart-btn">
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
-                            <input type="number" id="stock" name="stock" value="<%= product.stock || '' %>" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="unit" class="block text-sm font-medium text-gray-700">Unit (e.g., kg, 1L)</label>
-                        <input type="text" id="unit" name="unit" value="<%= product.unit || '' %>" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    </div>
-                    <div>
-                        <label for="image" class="block text-sm font-medium text-gray-700">Image URL</label>
-                        <input type="url" id="image" name="image" value="<%= product.image || '' %>" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    </div>
-                    <div class="flex justify-end space-x-4">
-                        <a href="/admin/products" class="px-4 py-2 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200">Cancel</a>
-                        <button type="submit" class="px-4 py-2 rounded-md text-white bg-primary hover:bg-green-700">Save Product</button>
-                    </div>
-                </form>
+                    </aside>
+                </div>
             </div>
         </main>
     </div>
+
+    <script>
+        // Live preview logic
+        document.addEventListener('DOMContentLoaded', function () {
+            const nameInput = document.getElementById('name');
+            const priceInput = document.getElementById('price');
+            const unitInput = document.getElementById('unit');
+            const imageInput = document.getElementById('image');
+            const brandSelect = document.getElementById('brand');
+
+            const previewName = document.getElementById('preview-name');
+            const previewPrice = document.getElementById('preview-price');
+            const previewUnit = document.getElementById('preview-unit');
+            const previewImage = document.getElementById('preview-image');
+            const previewBrand = document.getElementById('preview-brand');
+
+            function updateName() {
+                previewName.textContent = nameInput.value.trim() || 'Product name';
+            }
+
+            function updatePrice() {
+                const value = parseFloat(priceInput.value);
+                const formatted = isNaN(value) ? '0.00' : value.toFixed(2);
+                previewPrice.textContent = '₹' + formatted;
+            }
+
+            function updateUnit() {
+                previewUnit.textContent = '/ ' + (unitInput.value.trim() || 'unit');
+            }
+
+            function updateImage() {
+                const url = imageInput.value.trim();
+                previewImage.src = url || 'https://via.placeholder.com/300x200?text=Product+Image';
+            }
+
+            function updateBrand() {
+                if (brandSelect && brandSelect.selectedOptions.length > 0) {
+                    previewBrand.textContent = brandSelect.selectedOptions[0].textContent;
+                }
+            }
+
+            if (nameInput) nameInput.addEventListener('input', updateName);
+            if (priceInput) priceInput.addEventListener('input', updatePrice);
+            if (unitInput) unitInput.addEventListener('input', updateUnit);
+            if (imageInput) imageInput.addEventListener('input', updateImage);
+            if (brandSelect) brandSelect.addEventListener('change', updateBrand);
+        });
+    </script>
 </body>
 </html>
