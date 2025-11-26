@@ -15,29 +15,49 @@
 <%- include('partials/header') %>
 
 <!-- Delivery Banner -->
-<div class="bg-gradient-to-r from-accent to-orange-500 text-white py-2">
+<div class="home-delivery-banner bg-gradient-to-r from-accent to-orange-500 text-white">
     <div class="container mx-auto px-4">
-        <div class="flex items-center justify-center space-x-4 text-sm">
-            <div class="delivery-pulse">
-                <i class="fas fa-bolt"></i>
+        <div class="home-delivery-inner">
+            <div class="flex items-center gap-2">
+                <div class="delivery-pulse home-delivery-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="home-delivery-text">
+                    <span class="font-semibold text-sm sm:text-base">
+                        Lightning-fast delivery in 10–30 minutes
+                    </span>
+                    <span class="hidden sm:inline text-xs sm:text-sm opacity-90">
+                        · Free delivery on orders above ₹199
+                    </span>
+                </div>
             </div>
-            <span class="font-medium">Lightning Fast Delivery in 10-30 minutes | </span>
-            <span>🚀 Free delivery on orders above ₹199</span>
+
+            <div class="home-delivery-perks">
+                <span class="home-delivery-pill">
+                    <i class="fas fa-shield-check"></i>
+                    <span>Verified local brands</span>
+                </span>
+                <span class="home-delivery-pill hidden md:inline-flex">
+                    <i class="fas fa-seedling"></i>
+                    <span>Freshness guaranteed</span>
+                </span>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Category Navigation -->
-<nav id="categories" class="bg-card border-b border-border py-4 sticky top-16 z-40">
+<nav id="categories" class="home-category-nav bg-card border-b border-border sticky top-16 z-40">
     <div class="container mx-auto px-4">
-        <div class="flex overflow-x-auto space-x-6 text-sm font-medium category-nav">
+        <div class="flex overflow-x-auto space-x-4 text-xs sm:text-sm font-medium category-nav py-1">
             <% categories.forEach(category => { %>
             <a href="/category/<%= category.slug %>" 
-               class="flex flex-col items-center space-y-1 min-w-0 whitespace-nowrap hover:text-primary transition-colors">
-                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="<%= category.icon %> text-green-600 text-xl"></i>
+               class="home-category-chip min-w-0 whitespace-nowrap"
+            >
+                <div class="home-category-icon">
+                    <i class="<%= category.icon %>"></i>
                 </div>
-                <span><%= category.name %></span>
+                <span class="home-category-label"><%= category.name %></span>
             </a>
             <% }) %>
         </div>
@@ -45,36 +65,85 @@
 </nav>
 
 <!-- Hero Banner -->
-<section class="bg-gradient-to-br from-primary to-green-700 text-white py-8">
+<section class="home-hero">
     <div class="container mx-auto px-4">
         <div class="grid md:grid-cols-2 gap-8 items-center">
+            <!-- LEFT TEXT -->
             <div>
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">
-                    Local Brands,<br>
-                    <span class="text-accent">Global Quality</span>
+                <div class="home-hero-badge-row">
+                    <span class="home-hero-badge">
+                        <i class="fas fa-store"></i>
+                        <span>Powered by local stores</span>
+                    </span>
+                    <span class="home-hero-badge hidden sm:inline-flex">
+                        <i class="fas fa-indian-rupee-sign"></i>
+                        <span>Best prices, every day</span>
+                    </span>
+                </div>
+
+                <h1 class="home-hero-title">
+                    Local Brands,<br/>
+                    <span class="home-hero-highlight">Global Quality.</span>
                 </h1>
-                <p class="text-xl mb-6 opacity-90">
-                    Discover premium local products at unbeatable prices. Verified quality, guaranteed freshness.
+
+                <p class="home-hero-subtitle">
+                    Discover premium local products at unbeatable prices. 
+                    Verified quality, guaranteed freshness, delivered in minutes.
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="/products" class="bg-accent hover:bg-orange-500 text-accent-foreground px-8 py-3 rounded-lg font-semibold transition-colors text-center inline-block">
-                        Start Shopping
+
+                <div class="home-hero-cta-row">
+                    <a href="/products" class="home-hero-cta-primary">
+                        Start shopping
                     </a>
-                    <a href="/brands" class="border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-3 rounded-lg font-semibold transition-colors text-center inline-block">
-                        View Local Brands
+                    <a href="/brands" class="home-hero-cta-secondary">
+                        View local brands
                     </a>
                 </div>
+
+                <div class="home-hero-stats">
+                    <div class="home-stat">
+                        <span class="home-stat-value">200+</span>
+                        <span class="home-stat-label">Local products</span>
+                    </div>
+                    <div class="home-stat">
+                        <span class="home-stat-value">30 min</span>
+                        <span class="home-stat-label">Avg delivery time</span>
+                    </div>
+                    <div class="home-stat">
+                        <span class="home-stat-value">4.8★</span>
+                        <span class="home-stat-label">Customer rating</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- RIGHT IMAGE -->
             <div class="hidden md:block">
-                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
-                     alt="Fresh Indian groceries and vegetables" 
-                     class="rounded-xl shadow-2xl" />
+                <div class="home-hero-image-shell">
+                    <img 
+                        src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                        alt="Fresh Indian groceries and vegetables" 
+                        class="home-hero-image"
+                    />
+                    <div class="home-hero-floating-card">
+                        <div class="home-hero-floating-row">
+                            <span class="home-floating-icon">
+                                <i class="fas fa-basket-shopping"></i>
+                            </span>
+                            <div>
+                                <p class="home-floating-title">Order packed</p>
+                                <p class="home-floating-subtitle">Your local store is preparing your basket</p>
+                            </div>
+                        </div>
+                        <p class="home-floating-meta">
+                            Live order tracking available on every order.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ... (rest of the content remains the same) ... -->
 
 <%- include('partials/footer') %>
 <%- include('partials/cart-sidebar') %>
@@ -82,4 +151,3 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
-
