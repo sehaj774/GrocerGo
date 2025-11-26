@@ -21,6 +21,24 @@
         initializeEventListeners();
         loadCart();
     });
+
+    function saveCartToBrowser(cartItems) {
+        if (typeof(Storage) !== "undefined") {
+            localStorage.setItem('tempCart', JSON.stringify(cartItems));
+            console.log("Cart backed up to LocalStorage");
+        }
+    }
+
+    function loadCartFromBrowser() {
+        if (typeof(Storage) !== "undefined") {
+            const savedCart = localStorage.getItem('tempCart');
+            if (savedCart) {
+                console.log("Restoring cart from LocalStorage:", JSON.parse(savedCart));
+                return JSON.parse(savedCart);
+            }
+        }
+        return [];
+    }
     
     // --- EVENT LISTENERS ---
     function initializeEventListeners() {
@@ -126,6 +144,7 @@
                 body: JSON.stringify({ productId, quantity: 1 })
             });
             const data = await response.json();
+            saveCartToBrowser(data.items); // Save new state to browser cache
             if (!response.ok) throw new Error(data.message || 'Server error');
             updateCartCount(data.cartCount);
         } catch (error) {
@@ -221,7 +240,7 @@
             }).join('');
             cartItemsContainer.innerHTML = itemsHtml;
             cartFooter.style.display = 'block';
-            if(cartTotalEl) cartTotalEl.textContent = `₹${cartData.total}`;
+            if(cartTotalEl) cartTotalEl.textContent = `${cartData.total}`;
         }
     }
     
