@@ -4,59 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Orders - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body { background-color: #f7fafc; }
-        .admin-nav a[href="/admin/orders"] { background-color: var(--primary); color: white; }
-    </style>
 </head>
-<body>
+<body class="bg-muted text-foreground font-sans">
     <div class="flex min-h-screen">
-        <%- include('./partials/sidebar') %>
+        <!-- Sidebar with active highlight -->
+        <%- include('./partials/sidebar', { currentPath: '/admin/orders' }) %>
 
-        <main class="flex-1 p-8">
-            <h2 class="text-3xl font-bold mb-6">Manage Orders</h2>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="p-4">Order ID</th>
-                            <th class="p-4">Customer</th>
-                            <th class="p-4">Date</th>
-                            <th class="p-4">Total</th>
-                            <th class="p-4">Status</th>
-                            <th class="p-4"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% orders.forEach(order => { %>
-                            <tr class="border-b">
-                                <td class="p-4 font-mono text-sm">#<%= order._id.toString().slice(-8) %></td>
-                                <td class="p-4"><%= order.user.name %></td>
-                                <td class="p-4"><%= new Date(order.orderDate).toLocaleDateString() %></td>
-                                <td class="p-4 font-semibold">₹<%= order.totalAmount.toFixed(2) %></td>
-                                <td class="p-4">
-                                    <%
-                                      let statusClass = 'bg-yellow-200 text-yellow-800'; // Default class
-                                      if (order.status === 'Delivered') {
-                                        statusClass = 'bg-green-200 text-green-800';
-                                      } else if (order.status === 'Shipped') {
-                                        statusClass = 'bg-blue-200 text-blue-800';
-                                      } else if (order.status === 'Cancelled') {
-                                        statusClass = 'bg-red-200 text-red-800';
-                                      }
-                                    %>
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full <%= statusClass %>">
-                                        <%= order.status %>
-                                    </span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <a href="/admin/orders/<%= order._id %>" class="px-3 py-1 text-sm rounded-md bg-gray-200 hover:bg-gray-300">View</a>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+        <main class="flex-1 p-6 md:p-8">
+            <div class="max-w-6xl mx-auto space-y-8">
+
+                <% 
+                    let totalOrders = orders ? orders.length : 0;
+                    let deliveredCount = 0;
+                    let inProgressCount = 0;
+                    let cancelledCount = 0;
+
+                    if (orders && orders.length) {
+                        orders.forEach(order => {
+                            if (order.status === 'Delivered') deliveredCount++;
+                            else if (order.status === 'Cancelled') cancelledCount++;
+                            else inProgressCount++;
+                        });
+                    }
+                %>
+
+                <!-- Page header -->
+                <header class="space-y-2">
+                    <h2 class="text-3xl font-bold">Manage Orders</h2>
+                    <p class="text-sm text-muted-foreground">
+                        Track, review and manage all customer orders in one place.
+                    </p>
+                </header>
+
+                <!-- Summary cards -->
+                <section>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-card rounded-xl shadow-md border border-border p-4 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-receipt text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                                    Total orders
+                                </p>
+                                <p class="text-lg font-bold"><%= totalOrders %></p>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-xl shadow-md border border-border p-4 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-truck text-blue-500"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                                    In progress
+                                </p>
+                                <p class="text-lg font-bold"><%= inProgressCount %></p>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-xl shadow-md border border-border p-4 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                                    Delivered
+                                </p>
+                                <p class="text-lg font-bold"><%= deliveredCount %></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Orders table -->
+                <section class="bg-card p-6 rounded-xl shadow-md border border-border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th class="text-right"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (orders && orders.length) { %>
+                                    <% orders.forEach(order => { %>
+                                        <tr>
+                                            <td class="font-mono text-xs">
+                                                #<%= order._id.toString().slice(-8) %>
+                                            </td>
+                                            <td>
+                                                <%= order.user && order.user.name ? order.user.name : 'Unknown' %>
+                                            </td>
+                                            <td>
+                                                <%= new Date(order.orderDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                            </td>
+                                            <td class="font-semibold">
+                                                ₹<%= order.totalAmount.toFixed(2) %>
+                                            </td>
+                                            <td>
+                                                <% 
+                                                    let badgeClass = 'bg-gray-200 text-gray-700';
+                                                    if (order.status === 'Delivered') {
+                                                        badgeClass = 'bg-green-200 text-green-800';
+                                                    } else if (order.status === 'Cancelled') {
+                                                        badgeClass = 'bg-red-200 text-red-800';
+                                                    }
+                                                %>
+                                                <span class="status-badge 
+                                                    <% if (order.status === 'Delivered') { %>status-delivered<% } %>
+                                                    <% if (order.status === 'Processing') { %>status-processing<% } %>
+                                                    <% if (order.status === 'Shipped') { %>status-shipped<% } %>
+                                                    <% if (order.status === 'Cancelled') { %>status-cancelled<% } %>
+                                                ">
+                                                    <%= order.status %>
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
+                                                <a href="/admin/orders/<%= order._id %>"
+                                                   class="px-3 py-1 text-xs rounded-md bg-muted hover:bg-gray-200 font-semibold">
+                                                    View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center py-6 text-sm text-muted-foreground">
+                                            No orders found yet.
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
             </div>
         </main>
     </div>
