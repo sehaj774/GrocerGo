@@ -11,6 +11,7 @@
     "list": "pm2 list",
     "logs": "pm2 logs grocergo --lines 100",
     "test": "jest",
+    "test:browser": "node __tests__/browser.test.js",
     "seed": "node utils/seeder.js -i",
     "seed:destroy": "node utils/seeder.js -d"
   },
@@ -21,13 +22,16 @@
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
+    "csurf": "^1.11.0",
     "dotenv": "^17.2.2",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.2",
     "pg": "^8.16.3",
+    "puppeteer": "^24.30.0",
     "redis": "^5.8.3",
     "socket.io": "^4.8.1"
   },
