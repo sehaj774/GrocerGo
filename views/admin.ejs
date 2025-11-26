@@ -3,44 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GrocerGo Admin Dashboard</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 40px; background-color: #f4f5f7; }
-        h1 { color: #172b4d; }
-        table { width: 100%; border-collapse: collapse; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        th, td { padding: 12px 15px; border: 1px solid #ddd; text-align: left; }
-        thead { background-color: #007bff; color: white; }
-        tr:nth-of-type(even) { background-color: #f8f9fa; }
-    </style>
+    <title>Admin Dashboard - GrocerGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <h1>GrocerGo Product Dashboard</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            <%# This EJS tag is a comment. The code below loops through the 'products' array. %>
-            <% if (products && products.length > 0) { %>
-                <% products.forEach(product => { %>
-                    <tr>
-                        <td><%= product.id %></td>
-                        <td><%= product.name %></td>
-                        <td><%= product.category %></td>
-                        <td>$<%= product.price.toFixed(2) %></td>
-                    </tr>
-                <% }); %>
-            <% } else { %>
-                <tr>
-                    <td colspan="4">No products found.</td>
-                </tr>
-            <% } %>
-        </tbody>
-    </table>
+<body class="bg-background text-foreground font-sans">
+
+<%- include('partials/header') %>
+
+<main class="min-h-screen bg-muted py-8">
+    <div class="container mx-auto px-4">
+        <!-- Page header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+            <div>
+                <h1 class="text-3xl font-bold mb-1">Admin Dashboard</h1>
+                <p class="text-sm text-muted-foreground">
+                    Manage products, monitor categories and keep your catalogue fresh.
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <i class="fas fa-shield-alt mr-2"></i> Admin access
+                </span>
+            </div>
+        </div>
+
+        <!-- Dashboard cards (summary) -->
+        <section class="mb-8">
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-card rounded-xl shadow-md border border-border p-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-box text-green-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                            Total products
+                        </p>
+                        <p class="text-lg font-bold truncate">
+                            <%= products && products.length ? products.length : 0 %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-xl shadow-md border border-border p-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                        <i class="fas fa-tags text-orange-500"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                            Categories (approx.)
+                        </p>
+                        <p class="text-lg font-bold truncate">
+                            <!-- Simple count based on distinct category field -->
+                            <% 
+                                const categorySet = new Set();
+                                if (products && products.length) {
+                                    products.forEach(p => { if (p.category) categorySet.add(p.category); });
+                                }
+                            %>
+                            <%= categorySet.size %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-xl shadow-md border border-border p-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-indian-rupee-sign text-blue-500"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                            Avg. price
+                        </p>
+                        <% 
+                            let avgPrice = 0;
+                            if (products && products.length) {
+                                let sum = 0;
+                                products.forEach(p => { sum += p.price || 0; });
+                                avgPrice = sum / products.length;
+                            }
+                        %>
+                        <p class="text-lg font-bold truncate">
+                            ₹<%= avgPrice.toFixed(2) %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products table -->
+        <section class="bg-card rounded-xl shadow-md border border-border overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-border">
+                <div>
+                    <h2 class="text-lg font-semibold">Product catalogue</h2>
+                    <p class="text-xs text-muted-foreground">
+                        Overview of all products currently listed in GrocerGo.
+                    </p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-24">ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th class="w-32 text-right">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (products && products.length > 0) { %>
+                            <% products.forEach(product => { %>
+                                <tr>
+                                    <td class="text-xs text-muted-foreground">
+                                        <%= product.id || (product._id ? product._id.toString().slice(-8) : '') %>
+                                    </td>
+                                    <td>
+                                        <span class="font-medium"><%= product.name %></span>
+                                    </td>
+                                    <td class="text-sm text-muted-foreground">
+                                        <%= product.category || 'Uncategorized' %>
+                                    </td>
+                                    <td class="text-right font-semibold">
+                                        ₹<%= product.price.toFixed(2) %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4" class="text-center py-6 text-sm text-muted-foreground">
+                                    No products found.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+
+<%- include('partials/footer') %>
+
+<script src="/js/app.js"></script>
 </body>
 </html>
