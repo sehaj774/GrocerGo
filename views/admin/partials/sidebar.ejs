@@ -1,13 +1,55 @@
-<aside class="w-64 bg-white border-r">
-    <div class="p-6">
-        <h1 class="text-2xl font-bold text-primary">GrocerGo Admin</h1>
+<% const path = (typeof currentPath !== 'undefined') ? currentPath : ''; %>
+
+<aside class="admin-sidebar">
+    <!-- Logo / heading -->
+    <div class="admin-sidebar-header">
+        <div class="admin-sidebar-logo-circle">
+            <i class="fas fa-basket-shopping"></i>
+        </div>
+        <div>
+            <h1 class="admin-sidebar-title">GrocerGo</h1>
+            <p class="admin-sidebar-subtitle">Admin Panel</p>
+        </div>
     </div>
-    <nav class="p-4 space-y-2 admin-nav">
-        <a href="/admin/dashboard" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Dashboard</a>
-        <a href="/admin/orders" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Orders</a>
-        <a href="/admin/products" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Products</a>
-        <a href="/admin/brands" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Brands</a>
-        <a href="/admin/delivery" class="block px-4 py-2 rounded-lg hover:bg-gray-100">Delivery</a>
-        <a href="/" class="block px-4 py-2 rounded-lg hover:bg-gray-100 mt-8 border-t pt-4">Back to Site</a>
+
+    <!-- Nav -->
+    <nav class="admin-nav">
+        <a href="/admin/dashboard"
+           class="admin-nav-link <%= path === '/admin/dashboard' ? 'active' : '' %>">
+            <span class="admin-nav-icon"><i class="fas fa-gauge-high"></i></span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/admin/orders"
+           class="admin-nav-link <%= path === '/admin/orders' ? 'active' : '' %>">
+            <span class="admin-nav-icon"><i class="fas fa-receipt"></i></span>
+            <span>Orders</span>
+        </a>
+
+        <a href="/admin/products"
+           class="admin-nav-link <%= path === '/admin/products' ? 'active' : '' %>">
+            <span class="admin-nav-icon"><i class="fas fa-box"></i></span>
+            <span>Products</span>
+        </a>
+
+        <a href="/admin/brands"
+           class="admin-nav-link <%= path === '/admin/brands' ? 'active' : '' %>">
+            <span class="admin-nav-icon"><i class="fas fa-store"></i></span>
+            <span>Brands</span>
+        </a>
+
+        <a href="/admin/delivery"
+           class="admin-nav-link <%= path === '/admin/delivery' ? 'active' : '' %>">
+            <span class="admin-nav-icon"><i class="fas fa-truck"></i></span>
+            <span>Delivery</span>
+        </a>
+
+        <div class="admin-nav-divider"></div>
+
+        <a href="/"
+           class="admin-nav-link admin-nav-back">
+            <span class="admin-nav-icon"><i class="fas fa-arrow-left"></i></span>
+            <span>Back to site</span>
+        </a>
     </nav>
 </aside>
