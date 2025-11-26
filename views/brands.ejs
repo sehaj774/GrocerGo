@@ -11,35 +11,93 @@
 
 <%- include('partials/header') %>
 
-<section class="bg-gradient-to-r from-primary to-green-700 text-white py-12">
+<% const brandCount = brands ? brands.length : 0; %>
+
+<!-- HERO -->
+<section class="brands-hero">
     <div class="container mx-auto px-4">
-        <div class="text-center">
-            <h1 class="text-4xl font-bold mb-4">Our Verified Local Brands</h1>
-            <p class="text-xl text-white/90 max-w-2xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto">
+            <h1 class="brands-hero-title">Our Verified Local Brands</h1>
+            <p class="brands-hero-subtitle">
                 Meet the trusted local suppliers who bring you premium quality products at prices you'll love.
             </p>
-        </div>
-    </div>
-</section>
 
-<section class="py-12">
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <% brands.forEach(brand => { %>
-            <div class="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow">
-                <div class="flex items-start space-x-4 mb-4">
-                    <img src="<%= brand.logo %>" alt="<%= brand.name %> logo" class="w-16 h-16 object-cover rounded-lg" />
-                    <div class="flex-1">
-                        <h3 class="text-xl font-bold"><%= brand.name %></h3>
-                        <p class="text-muted-foreground">Specializes in <strong><%= brand.category %></strong></p>
-                    </div>
-                </div>
+            <div class="brands-hero-chip-row">
+                <span class="brands-hero-chip">
+                    <i class="fas fa-shield-check"></i>
+                    <span>Verified quality partners</span>
+                </span>
+                <span class="brands-hero-chip">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Supporting neighbourhood businesses</span>
+                </span>
+                <span class="brands-hero-count">
+                    <strong><%= brandCount %></strong> brand<%= brandCount === 1 ? '' : 's' %> onboarded
+                </span>
             </div>
-            <% }) %>
         </div>
     </div>
 </section>
 
+<!-- BRANDS GRID -->
+<section class="py-12 brands-section">
+    <div class="container mx-auto px-4">
+        <% if (!brands || brands.length === 0) { %>
+            <div class="brands-empty-state">
+                <div class="brands-empty-icon">
+                    <i class="fas fa-store-slash"></i>
+                </div>
+                <h2>No brands onboarded yet</h2>
+                <p class="brands-empty-text">
+                    We’re actively partnering with local stores and producers. 
+                    Check back soon to see featured brands in your area.
+                </p>
+                <a href="/products" class="brands-empty-cta">
+                    Browse available products
+                </a>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <% brands.forEach(brand => { %>
+                    <article class="brand-card">
+                        <div class="brand-card-header">
+                            <div class="brand-logo-shell">
+                                <img 
+                                    src="<%= brand.logo %>" 
+                                    alt="<%= brand.name %> logo" 
+                                    class="brand-logo"
+                                />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="brand-name"><%= brand.name %></h3>
+                                <p class="brand-category">
+                                    Specializes in <strong><%= brand.category %></strong>
+                                </p>
+                                <div class="brand-tags">
+                                    <span class="brand-tag">
+                                        <i class="fas fa-badge-check"></i>
+                                        Verified local brand
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="brand-footer">
+                            <div class="brand-footer-left">
+                                <span class="brand-footer-icon">
+                                    <i class="fas fa-basket-shopping"></i>
+                                </span>
+                                <p class="brand-footer-text">
+                                    Explore products from <strong><%= brand.name %></strong> in relevant categories.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        <% } %>
+    </div>
+</section>
 
 <%- include('partials/footer') %>
 <%- include('partials/cart-sidebar') %>
