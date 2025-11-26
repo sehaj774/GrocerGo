@@ -1,37 +1,62 @@
-<header>
+<header class="header-blur">
     <div class="header-container">
         <div class="header-content">
+            <!-- LEFT: Brand + Location -->
             <div class="header-left">
-                <a href="/" class="logo">GrocerGo</a>
+                <a href="/" class="logo brand-logo">
+                    <span class="brand-mark">G</span>
+                    <span class="brand-text">
+                        <span class="brand-title">GrocerGo</span>
+                        <span class="brand-subtitle">Local groceries · superfast</span>
+                    </span>
+                </a>
+
                 <button class="location-badge" id="pincode-button">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Deliver to: <strong><%= userPincode %></strong></span>
+                    <span class="location-dot"></span>
+                    <span class="location-text">
+                        <span class="location-label">Deliver to</span>
+                        <span class="location-value"><%= userPincode %></span>
+                    </span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
             
+            <!-- RIGHT: Search + Cart + Account -->
             <div class="header-right">
                 <form action="/search" method="GET" class="search-form">
-                    <input type="text" name="q" placeholder="Search for products..." class="search-input">
-                    <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+                    <input 
+                        type="text" 
+                        name="q" 
+                        placeholder="Search fruits, veggies, snacks..." 
+                        class="search-input"
+                    >
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </form>
                 
                 <button class="cart-button" id="cart-toggle">
-                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <i class="fas fa-shopping-cart"></i>
                     <span class="cart-badge" id="cart-count"><%= cartCount %></span>
                 </button>
                 
                 <% if (user) { %>
-                    <div class="account-button" style="display: flex; align-items: center; gap: 1rem; background-color: rgba(255, 255, 255, 0.2); padding: 0.5rem 0.75rem; border-radius: 0.5rem;">
-                        <span>Hi, <%= user.name.split(' ')[0] %></span>
-                        
-                        <%# This link only shows for admin roles %>
+                    <div class="account-button">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="account-name">Hi, <%= user.name.split(' ')[0] %></span>
+
                         <% if (user.role === 'ADMIN' || user.role === 'PRODUCT_MANAGER') { %>
-                            <a href="/admin/dashboard" title="Admin Panel" class="hover:text-white/80"><i class="fas fa-user-shield"></i></a>
+                            <a href="/admin/dashboard" title="Admin Panel" class="hover:text-foreground">
+                                <i class="fas fa-user-shield"></i>
+                            </a>
                         <% } %>
-                        
-                        <a href="/orders" title="My Orders" class="hover:text-white/80"><i class="fas fa-box-open"></i></a>
-                        <a href="/auth/logout" class="font-semibold hover:underline">Logout</a>
+
+                        <a href="/orders" title="My Orders" class="hover:text-foreground">
+                            <i class="fas fa-box-open"></i>
+                        </a>
+                        <a href="/auth/logout" class="font-semibold hover:underline">
+                            Logout
+                        </a>
                     </div>
                 <% } else { %>
                     <a href="/auth/login" class="account-button">
@@ -41,11 +66,20 @@
                 <% } %>
             </div>
         </div>
-        
+
+        <!-- MOBILE SEARCH -->
         <div class="mobile-search">
             <form action="/search" method="GET" style="display: flex; width: 100%;">
-                <input type="text" name="q" placeholder="Search groceries..." class="search-input" style="flex: 1;">
-                <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+                <input 
+                    type="text" 
+                    name="q" 
+                    placeholder="Search groceries near you..." 
+                    class="search-input" 
+                    style="flex: 1;"
+                >
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
             </form>
         </div>
     </div>
@@ -53,15 +87,31 @@
 
 <!-- Pincode Modal -->
 <div id="pincode-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-    <div class="bg-card p-6 rounded-lg shadow-lg w-80">
-        <h3 class="text-xl font-bold mb-4">Change Delivery Pincode</h3>
+    <div class="bg-card p-6 rounded-lg shadow-lg w-80 pincode-modal-card">
+        <h3 class="text-xl font-bold mb-4">Change delivery pincode</h3>
         <form id="pincode-form">
-            <input type="text" id="pincode-input" placeholder="Enter 6-digit pincode" class="w-full border-border border p-2 rounded mb-4" maxlength="6">
+            <input 
+                type="text" 
+                id="pincode-input" 
+                placeholder="Enter 6-digit pincode" 
+                class="w-full border-border border p-2 rounded mb-4" 
+                maxlength="6"
+            >
             <div class="flex justify-end space-x-2">
-                <button type="button" id="cancel-pincode" class="px-4 py-2 bg-muted rounded">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-primary text-primary-foreground rounded">Update</button>
+                <button 
+                    type="button" 
+                    id="cancel-pincode" 
+                    class="px-4 py-2 bg-muted rounded text-sm"
+                >
+                    Cancel
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 bg-primary text-primary-foreground rounded text-sm"
+                >
+                    Update
+                </button>
             </div>
         </form>
     </div>
 </div>
-
